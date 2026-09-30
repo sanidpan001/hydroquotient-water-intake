@@ -1,0 +1,808 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HydroQuotient — Daily Water Intake Calculator | How Much Water Should You Drink?</title>
+<meta name="description" content="HydroQuotient is a free daily water intake calculator. Enter weight, exercise, climate, caffeine and alcohol to get your personal hydration target in liters, glasses and bottles — plus a timed drinking schedule.">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  body { font-family: 'Plus Jakarta Sans', ui-sans-serif, system-ui, sans-serif; }
+  .ocean-bg { background: linear-gradient(135deg, #0C4A6E 0%, #075985 55%, #0C4A6E 100%); }
+  .aqua-glow { box-shadow: 0 0 0 4px rgba(34,211,238,.18), 0 20px 60px -20px rgba(12,74,110,.55); }
+  .seg-btn.active { background:#0C4A6E; color:#fff; border-color:#0C4A6E; }
+  .climate-btn.active { background:#22D3EE; color:#0C4A6E; border-color:#22D3EE; font-weight:700; }
+  input[type=range] { accent-color:#0891B2; }
+  .timeline-dot { width:18px; height:18px; border-radius:9999px; border:3px solid #22D3EE; background:#fff; }
+  .timeline-slot.done .timeline-dot { background:#22D3EE; }
+  .timeline-slot.done .slot-card { border-color:#22D3EE; background:#ECFEFF; }
+  .wave-divider { display:block; width:100%; height:60px; }
+  .no-print {}
+  @media print { .no-print { display:none !important; } }
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "How much water should I drink per day?",
+      "acceptedAnswer": { "@type": "Answer", "text": "A widely used starting point is 33 ml of water per kilogram of body weight per day. A 70 kg adult therefore needs about 2.3 litres as a baseline, plus roughly 600 ml for every hour of exercise, more in hot climates, and extra amounts to offset coffee, tea or alcohol. HydroQuotient calculates your personal target from all of these factors." }
+    },
+    {
+      "@type": "Question",
+      "name": "How do I calculate daily water intake by weight?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Multiply your weight in kilograms by 33 ml. For example, 60 kg x 33 ml = 1,980 ml (about 2 litres). If you weigh yourself in pounds, first convert to kilograms by multiplying by 0.4536. Then add water for exercise, heat, caffeine, alcohol, pregnancy or breastfeeding." }
+    },
+    {
+      "@type": "Question",
+      "name": "How many glasses of water per day should I drink?",
+      "acceptedAnswer": { "@type": "Answer", "text": "It depends on your body and lifestyle, but using a standard 250 ml glass, most adults land between 8 and 12 glasses per day. A 70 kg moderately active person in a mild climate needs about 9-10 glasses. HydroQuotient shows your target in glasses, bottles and litres." }
+    },
+    {
+      "@type": "Question",
+      "name": "Does coffee count toward my daily water intake?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Coffee and tea are about 98% water and do hydrate you, but caffeine has a mild diuretic effect at higher doses and alcohol is a stronger diuretic. HydroQuotient adds a 150 ml penalty per cup of coffee or tea and 250 ml per alcoholic drink so your target compensates." }
+    },
+    {
+      "@type": "Question",
+      "name": "Do I need more water if I am pregnant or breastfeeding?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. Standard guidance adds about 300 ml per day during pregnancy and about 700 ml per day while breastfeeding. Toggle the pregnancy/breastfeeding option in HydroQuotient and your target is raised automatically." }
+    },
+    {
+      "@type": "Question",
+      "name": "How should I spread my water intake through the day?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Drink steadily from morning to evening rather than in a few large gulps. HydroQuotient builds a timed schedule with glass-sized slots from your wake-up time to an hour before bed, so you finish your target comfortably without late-night bathroom trips." }
+    }
+  ]
+}
+</script>
+</head>
+<body id="top" class="bg-white text-slate-800 antialiased">
+
+<!-- ======= STICKY HEADER ======= -->
+<header class="sticky top-0 z-50 ocean-bg text-white shadow-lg">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 h-16 flex items-center justify-between">
+    <a href="#top" class="flex items-center gap-2 font-extrabold text-xl tracking-tight">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M12 2C12 2 5 10.2 5 15a7 7 0 0 0 14 0C19 10.2 12 2 12 2Z" fill="#22D3EE"/>
+        <path d="M9.5 15.5a2.8 2.8 0 0 0 2.5 3" stroke="#0C4A6E" stroke-width="1.6" stroke-linecap="round"/>
+      </svg>
+      HydroQuotient
+    </a>
+    <nav class="flex items-center gap-5 text-sm font-semibold">
+      <a href="#top" class="hover:text-cyan-300 transition">Home</a>
+      <a href="https://fixoraa.tech" class="hover:text-cyan-300 transition">More Tools</a>
+    </nav>
+  </div>
+</header>
+
+<!-- ======= TOP AD (verbatim) ======= -->
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pt-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <div class="origin-top scale-[0.44] sm:scale-100 shrink-0">
+        <script>
+          atOptions = { 'key' : '4e68ac77881c17fe128a46565d9a4e8c', 'format' : 'iframe', 'height' : 90, 'width' : 728, 'params' : {} };
+        </script>
+        <script src="https://www.highrevenueformat.com/4e68ac77881c17fe128a46565d9a4e8c/invoke.js"></script>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ======= TOOL: HYDRATION DASHBOARD ======= -->
+<main class="mx-auto max-w-6xl px-4 sm:px-6 py-8">
+
+  <div class="flex flex-wrap items-center gap-3 mb-6">
+    <span class="inline-flex items-center gap-1.5 rounded-full bg-cyan-100 text-cyan-900 text-xs font-bold px-3 py-1.5 border border-cyan-300">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 2 4 6v6c0 5 3.5 8.7 8 10 4.5-1.3 8-5 8-10V6l-8-4Z" fill="#0C4A6E"/></svg>
+      Unlimited Free Usage
+    </span>
+    <span class="text-xs text-slate-500 font-medium">No signup &middot; No paywall &middot; 100% private — everything runs in your browser</span>
+  </div>
+
+  <div class="grid gap-6 lg:grid-cols-5">
+
+    <!-- INPUTS -->
+    <section class="lg:col-span-2 rounded-3xl border border-slate-200 bg-white shadow-sm p-6" aria-label="Your details">
+      <h2 class="text-lg font-extrabold text-[#0C4A6E] mb-4">Your details</h2>
+
+      <label class="block text-sm font-semibold text-slate-600 mb-1.5" for="weight">Body weight</label>
+      <div class="flex gap-2 mb-4">
+        <input id="weight" type="number" min="0" step="any" placeholder="e.g. 70"
+               class="w-full rounded-xl border border-slate-300 px-4 py-2.5 text-lg font-bold text-[#0C4A6E] focus:outline-none focus:ring-2 focus:ring-cyan-400">
+        <div class="flex rounded-xl border border-slate-300 overflow-hidden shrink-0" role="group" aria-label="Weight unit">
+          <button type="button" data-unit="kg" class="seg-btn active px-4 py-2.5 text-sm font-bold border border-transparent">kg</button>
+          <button type="button" data-unit="lbs" class="seg-btn px-4 py-2.5 text-sm font-bold border border-transparent text-slate-500">lbs</button>
+        </div>
+      </div>
+
+      <label class="block text-sm font-semibold text-slate-600 mb-1.5" for="exercise">Exercise today <span class="text-cyan-700 font-bold" id="exerciseVal">30 min</span></label>
+      <input id="exercise" type="range" min="0" max="180" step="5" value="30" class="w-full mb-4">
+
+      <span class="block text-sm font-semibold text-slate-600 mb-1.5">Climate today</span>
+      <div class="grid grid-cols-2 gap-2 mb-4" role="group" aria-label="Climate">
+        <button type="button" data-climate="mild" class="climate-btn active rounded-xl border border-slate-300 px-3 py-2.5 text-sm">Mild / cool</button>
+        <button type="button" data-climate="warm" class="climate-btn rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-600">Warm</button>
+        <button type="button" data-climate="hot" class="climate-btn rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-600">Hot</button>
+        <button type="button" data-climate="extreme" class="climate-btn rounded-xl border border-slate-300 px-3 py-2.5 text-sm text-slate-600">Hot + humid</button>
+      </div>
+
+      <span class="block text-sm font-semibold text-slate-600 mb-1.5">Cups &amp; drinks today <span class="font-normal text-slate-400">(dehydration penalty)</span></span>
+      <div class="grid grid-cols-3 gap-2 mb-4">
+        <div class="rounded-xl border border-slate-200 p-2.5 text-center">
+          <div class="text-2xl mb-1">&#9749;</div>
+          <div class="text-xs font-semibold text-slate-500 mb-1.5">Coffee</div>
+          <div class="flex items-center justify-center gap-2">
+            <button type="button" data-step="coffee,-1" class="w-7 h-7 rounded-full bg-slate-100 font-bold text-[#0C4A6E]">&minus;</button>
+            <span id="coffeeCount" class="font-extrabold text-[#0C4A6E] w-5">0</span>
+            <button type="button" data-step="coffee,1" class="w-7 h-7 rounded-full bg-cyan-100 font-bold text-[#0C4A6E]">+</button>
+          </div>
+        </div>
+        <div class="rounded-xl border border-slate-200 p-2.5 text-center">
+          <div class="text-2xl mb-1">&#127861;</div>
+          <div class="text-xs font-semibold text-slate-500 mb-1.5">Tea</div>
+          <div class="flex items-center justify-center gap-2">
+            <button type="button" data-step="tea,-1" class="w-7 h-7 rounded-full bg-slate-100 font-bold text-[#0C4A6E]">&minus;</button>
+            <span id="teaCount" class="font-extrabold text-[#0C4A6E] w-5">0</span>
+            <button type="button" data-step="tea,1" class="w-7 h-7 rounded-full bg-cyan-100 font-bold text-[#0C4A6E]">+</button>
+          </div>
+        </div>
+        <div class="rounded-xl border border-slate-200 p-2.5 text-center">
+          <div class="text-2xl mb-1">&#127864;</div>
+          <div class="text-xs font-semibold text-slate-500 mb-1.5">Alcohol</div>
+          <div class="flex items-center justify-center gap-2">
+            <button type="button" data-step="alcohol,-1" class="w-7 h-7 rounded-full bg-slate-100 font-bold text-[#0C4A6E]">&minus;</button>
+            <span id="alcoholCount" class="font-extrabold text-[#0C4A6E] w-5">0</span>
+            <button type="button" data-step="alcohol,1" class="w-7 h-7 rounded-full bg-cyan-100 font-bold text-[#0C4A6E]">+</button>
+          </div>
+        </div>
+      </div>
+
+      <span class="block text-sm font-semibold text-slate-600 mb-1.5">Special condition</span>
+      <div class="flex rounded-xl border border-slate-300 overflow-hidden mb-4" role="group" aria-label="Pregnancy or breastfeeding">
+        <button type="button" data-preg="none" class="seg-btn active flex-1 px-3 py-2.5 text-sm font-bold border border-transparent">None</button>
+        <button type="button" data-preg="pregnant" class="seg-btn flex-1 px-3 py-2.5 text-sm font-bold border border-transparent text-slate-500">Pregnant</button>
+        <button type="button" data-preg="breastfeeding" class="seg-btn flex-1 px-3 py-2.5 text-sm font-bold border border-transparent text-slate-500">Breastfeeding</button>
+      </div>
+
+      <div class="grid grid-cols-2 gap-2">
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1.5" for="wake">Wake up</label>
+          <input id="wake" type="time" value="07:00" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 font-semibold text-[#0C4A6E] focus:outline-none focus:ring-2 focus:ring-cyan-400">
+        </div>
+        <div>
+          <label class="block text-sm font-semibold text-slate-600 mb-1.5" for="bed">Bedtime</label>
+          <input id="bed" type="time" value="22:00" class="w-full rounded-xl border border-slate-300 px-3 py-2.5 font-semibold text-[#0C4A6E] focus:outline-none focus:ring-2 focus:ring-cyan-400">
+        </div>
+      </div>
+      <p class="text-xs text-slate-400 mt-4">Your schedule spreads drinking slots from wake-up to one hour before bed.</p>
+    </section>
+
+    <!-- HERO RESULT -->
+    <section class="lg:col-span-3 flex flex-col gap-6" aria-label="Your hydration target">
+      <div class="ocean-bg rounded-3xl p-6 sm:p-8 text-white aqua-glow relative overflow-hidden">
+        <svg class="absolute -right-10 -bottom-10 opacity-10" width="240" height="240" viewBox="0 0 24 24" fill="#22D3EE" aria-hidden="true">
+          <path d="M12 2C12 2 5 10.2 5 15a7 7 0 0 0 14 0C19 10.2 12 2 12 2Z"/>
+        </svg>
+        <p class="text-cyan-300 text-xs font-bold tracking-[0.2em] uppercase mb-2">Your daily water target</p>
+        <div id="heroMain" class="hidden">
+          <div class="flex items-baseline gap-2 flex-wrap">
+            <span id="targetLiters" class="text-6xl sm:text-7xl font-extrabold tracking-tight">0</span>
+            <span class="text-2xl font-bold text-cyan-200">litres</span>
+          </div>
+          <div class="flex flex-wrap gap-2 mt-5">
+            <span class="rounded-full bg-white/10 border border-cyan-300/40 px-4 py-2 text-sm font-bold"><span id="targetMl">0</span> ml</span>
+            <span class="rounded-full bg-white/10 border border-cyan-300/40 px-4 py-2 text-sm font-bold">&#129380; <span id="targetGlasses">0</span> glasses <span class="font-normal text-cyan-200">(250 ml)</span></span>
+            <span class="rounded-full bg-white/10 border border-cyan-300/40 px-4 py-2 text-sm font-bold">&#128167; <span id="targetBottles">0</span> bottles <span class="font-normal text-cyan-200">(500 ml)</span></span>
+          </div>
+        </div>
+        <div id="heroEmpty" class="py-6">
+          <p class="text-xl font-bold text-cyan-100">Enter your weight to reveal your personal target.</p>
+          <p class="text-sm text-cyan-200/80 mt-1">Your hydration dashboard updates instantly as you adjust the inputs.</p>
+        </div>
+      </div>
+
+      <!-- BREAKDOWN -->
+      <div id="breakdownCard" class="hidden rounded-3xl border border-slate-200 bg-white shadow-sm p-6">
+        <h3 class="text-base font-extrabold text-[#0C4A6E] mb-3">How your target is built</h3>
+        <dl class="text-sm space-y-2.5">
+          <div class="flex justify-between gap-3"><dt class="text-slate-500">Base need (weight &times; 33 ml/kg)</dt><dd class="font-bold text-[#0C4A6E]" id="bdBase">0 ml</dd></div>
+          <div class="flex justify-between gap-3"><dt class="text-slate-500">Exercise (<span id="bdExMin">0</span> min)</dt><dd class="font-bold text-[#0C4A6E]" id="bdExercise">+0 ml</dd></div>
+          <div class="flex justify-between gap-3"><dt class="text-slate-500">Climate adjustment (<span id="bdClimateName">mild</span>, &times;<span id="bdClimateMult">1.0</span>)</dt><dd class="font-bold text-[#0C4A6E]" id="bdSubtotal">0 ml</dd></div>
+          <div class="flex justify-between gap-3"><dt class="text-slate-500">Caffeine / alcohol penalty</dt><dd class="font-bold text-amber-600" id="bdPenalty">+0 ml</dd></div>
+          <div class="flex justify-between gap-3"><dt class="text-slate-500" id="bdPregLabel">Pregnancy / breastfeeding</dt><dd class="font-bold text-[#0C4A6E]" id="bdPreg">+0 ml</dd></div>
+          <div class="flex justify-between gap-3 border-t border-slate-200 pt-2.5"><dt class="font-extrabold text-[#0C4A6E]">Daily target</dt><dd class="font-extrabold text-[#0C4A6E] text-base" id="bdTotal">0 ml</dd></div>
+        </dl>
+      </div>
+    </section>
+  </div>
+
+  <!-- SCHEDULE TIMELINE -->
+  <section id="scheduleSection" class="hidden mt-6 rounded-3xl border border-slate-200 bg-gradient-to-b from-cyan-50/60 to-white shadow-sm p-6 sm:p-8" aria-label="Your hydration schedule">
+    <div class="flex flex-wrap items-center justify-between gap-3 mb-2">
+      <h2 class="text-xl font-extrabold text-[#0C4A6E]">Your drinking schedule</h2>
+      <div class="flex items-center gap-3">
+        <button id="copySchedule" type="button" class="text-sm font-bold text-cyan-700 bg-cyan-100 hover:bg-cyan-200 rounded-full px-4 py-2 transition">Copy schedule</button>
+        <button id="resetProgress" type="button" class="text-sm font-bold text-slate-500 bg-slate-100 hover:bg-slate-200 rounded-full px-4 py-2 transition">Reset today</button>
+      </div>
+    </div>
+    <div class="mb-6">
+      <div class="flex justify-between text-xs font-bold text-slate-500 mb-1.5">
+        <span id="progressText">0 of 0 drinks done</span><span id="progressPct">0%</span>
+      </div>
+      <div class="h-3 rounded-full bg-slate-200 overflow-hidden">
+        <div id="progressBar" class="h-full rounded-full bg-gradient-to-r from-cyan-400 to-[#0C4A6E] transition-all" style="width:0%"></div>
+      </div>
+    </div>
+    <ol id="scheduleList" class="relative border-l-2 border-cyan-200 ml-2.5 space-y-5"></ol>
+    <p class="text-xs text-slate-400 mt-6">Tip: drink each slot steadily rather than gulping it all at once. Tick a slot off as you finish it — your progress is saved on this device for today.</p>
+  </section>
+</main>
+
+<!-- ======= BOTTOM AD (verbatim) ======= -->
+<div class="no-print mx-auto max-w-6xl px-4 sm:px-6 pb-4" role="complementary" aria-label="Advertisement">
+  <div class="mx-auto text-center" style="max-width:728px">
+    <span class="block text-[10px] tracking-[0.18em] uppercase text-slate-400 mb-1.5">Advertisement</span>
+    <div class="flex justify-center overflow-hidden">
+      <script async src="https://js.wpadmngr.com/static/adManager.js" data-admpid="464498"></script>
+    </div>
+  </div>
+</div>
+
+<!-- ======= SEO ARTICLE ======= -->
+<div class="bg-slate-50 border-t border-slate-200">
+  <div class="mx-auto max-w-4xl px-4 sm:px-6 py-12">
+    <article id="seo-article" class="prose-slate">
+      <h2 class="text-3xl font-extrabold text-[#0C4A6E] mb-6">How Much Water Should You Drink? The Complete Hydration Guide</h2>
+
+      <p class="mb-4 text-slate-700 leading-relaxed">Few health questions are asked more often than "how much water should I drink per day?" You have probably heard the famous eight-glasses rule, seen fitness influencers carrying gallon jugs, and read conflicting advice about whether coffee counts. The honest answer is that there is no single magic number — your ideal daily water intake depends on your body weight, how active you are, the climate you live in, what you drink besides water, and even whether you are pregnant or breastfeeding. This guide explains the science behind personalized hydration targets and shows you exactly how to calculate your own number.</p>
+
+      <h3 class="text-xl font-bold text-[#0C4A6E] mt-8 mb-3">Why body weight is the best starting point</h3>
+      <p class="mb-4 text-slate-700 leading-relaxed">A larger body contains more water and loses more of it through breathing, sweating and normal metabolism, which is why a one-size-fits-all recommendation fails. Clinicians and sports nutritionists commonly use a weight-based formula: multiply your weight in kilograms by 30 to 35 millilitres. HydroQuotient uses 33 ml per kilogram, the midpoint of that range and the figure cited by several online hydration calculators that reference Institute of Medicine and European Food Safety Authority guidelines.</p>
+      <p class="mb-4 text-slate-700 leading-relaxed">What does a water intake calculator based on weight actually produce? A 50 kg person gets a baseline of about 1.65 litres; 60 kg gives roughly 2 litres; 70 kg lands near 2.3 litres; 80 kg works out to about 2.65 litres; and 100 kg reaches 3.3 litres. If you weigh yourself in pounds, convert first by multiplying by 0.4536 — a 154 lb person is about 70 kg and therefore starts at the same 2.3-litre baseline. Remember that this is only the starting line. Food typically supplies around a fifth of total daily water, mostly from fruits, vegetables, soups and cooked grains, so the amount you need to actively drink is somewhat lower than the headline figure.</p>
+
+      <h3 class="text-xl font-bold text-[#0C4A6E] mt-8 mb-3">Exercise: the biggest variable most people ignore</h3>
+      <p class="mb-4 text-slate-700 leading-relaxed">Physical activity can change your water needs more dramatically than anything else in your routine. A moderate workout makes you sweat out roughly 0.5 to 1 litre per hour, and in heat or during intense endurance sport that can climb far higher. HydroQuotient adds about 600 ml for every hour of exercise — a conservative middle of the published range — so a 45-minute run adds roughly 450 ml to your target while a gentle 20-minute walk adds only about 200 ml. The practical rule is simple: on training days, drink more; on rest days, scale back. Athletes training longer than an hour should also think about electrolytes, because replacing heavy sweat losses with plain water alone can dilute blood sodium.</p>
+
+      <h3 class="text-xl font-bold text-[#0C4A6E] mt-8 mb-3">Climate matters more than you think</h3>
+      <p class="mb-4 text-slate-700 leading-relaxed">Your environment quietly raises or lowers the bar. In a mild, temperate climate or an air-conditioned office, your baseline needs no adjustment. Warm weather increases sweat and respiratory water loss, hot weather increases it further, and hot-plus-humid conditions — where sweat evaporates poorly and your body keeps pumping it out — push needs highest. HydroQuotient applies multipliers of 1.0, 1.1, 1.2 and 1.3 across these four scenarios, which mirrors the approach used by several published hydration calculators. The difference is not trivial: a 70 kg person exercising 30 minutes goes from about 2.6 litres on a mild day to nearly 3.4 litres in hot, humid weather. If you travel from a cool climate to the tropics, expect to feel thirstier for the first week while your body acclimatizes — and drink accordingly.</p>
+
+      <h3 class="text-xl font-bold text-[#0C4A6E] mt-8 mb-3">Coffee, tea and alcohol: the dehydration penalty</h3>
+      <p class="mb-4 text-slate-700 leading-relaxed">Here is where most water intake calculators stop — and where HydroQuotient goes further. Coffee and tea are about 98 percent water and absolutely contribute to hydration; research shows that moderate consumption of one to three cups a day provides a net fluid gain. But caffeine does have a mild diuretic effect that grows with dose, and alcohol is a considerably stronger diuretic that suppresses the hormone telling your kidneys to conserve water. Rather than pretending these drinks do not exist, HydroQuotient's penalty adjuster adds 150 ml to your target for every cup of coffee or tea and 250 ml for every alcoholic drink. It is a deliberately simple, transparent adjustment — not a medical claim — designed to nudge heavy coffee drinkers and anyone having evening drinks toward the extra glass or two that offsets the loss.</p>
+
+      <h3 class="text-xl font-bold text-[#0C4A6E] mt-8 mb-3">Pregnancy and breastfeeding raise the bar</h3>
+      <p class="mb-4 text-slate-700 leading-relaxed">Fluid needs climb when you are building or nourishing a new human. Standard guidance from the Institute of Medicine adds roughly 300 ml per day during pregnancy — supporting increased blood volume and amniotic fluid — and about 700 ml per day while breastfeeding, since breast milk is nearly 90 percent water. These are meaningful amounts: for a 65 kg woman, breastfeeding adds roughly a third to her baseline target. Toggle the pregnancy or breastfeeding option in the calculator and the adjustment is applied automatically, so mothers do not have to do the mental arithmetic themselves.</p>
+
+      <h3 class="text-xl font-bold text-[#0C4A6E] mt-8 mb-3">Glasses, bottles and litres: making the number usable</h3>
+      <p class="mb-4 text-slate-700 leading-relaxed">A target like "2,640 ml" is accurate but hard to act on, which is why HydroQuotient translates every result into three everyday units. Using a standard 250 ml drinking glass, most adults land between 8 and 12 glasses of water per day — so the old eight-glass rule turns out to be a decent minimum for smaller, sedentary people in cool climates, but an underestimate for larger or active people. The same target expressed in 500 ml bottles is often the most practical: a 2.6-litre day is just over five bottles, which makes it easy to track with a reusable bottle you refill. Litres remain the most precise unit and the one most health authorities use. Pick whichever unit you will actually count; consistency beats precision.</p>
+
+      <h3 class="text-xl font-bold text-[#0C4A6E] mt-8 mb-3">Why a drinking schedule beats willpower</h3>
+      <p class="mb-4 text-slate-700 leading-relaxed">Knowing your number is only half the battle — most people who fall short do so because they forget to drink until evening, then try to catch up with two litres at 9 pm and spend the night in the bathroom. Spreading intake across the day keeps your body steadily hydrated, supports concentration and energy, and avoids overloading your kidneys and bladder in a short window. HydroQuotient builds a personalised hydration schedule from your wake-up and bedtime: it divides your target into glass-sized slots, spaces them evenly from morning until an hour before bed, and lets you tick each one off as you go. Your progress is saved on your device, so a glance at the progress bar tells you whether you are on track at 3 pm instead of discovering a deficit at midnight.</p>
+
+      <h3 class="text-xl font-bold text-[#0C4A6E] mt-8 mb-3">Signs you are not drinking enough</h3>
+      <p class="mb-4 text-slate-700 leading-relaxed">Your body sends clear signals long before true dehydration sets in. The simplest is urine colour: pale straw means you are well hydrated, while dark yellow or amber means drink more. Other early signs include a dry mouth, headache, afternoon fatigue, difficulty concentrating and constipation. Thirst itself is a slightly lagging indicator — by the time you feel noticeably thirsty you are already mildly behind — which is exactly why a schedule works better than relying on thirst alone. On the flip side, constantly crystal-clear urine combined with feeling bloated or washed out can mean you are overdoing it; more is not always better, and extreme overconsumption in a short time can dangerously dilute blood sodium.</p>
+
+      <h3 class="text-xl font-bold text-[#0C4A6E] mt-8 mb-3">Hydration myths worth retiring</h3>
+      <p class="mb-4 text-slate-700 leading-relaxed">The "eight glasses a day" rule has no strong scientific origin, yet it survives because it is a reasonable floor for many people — just not a ceiling, and not personalised. "Coffee dehydrates you" is mostly false at normal intakes; a cup of coffee hydrates more than it costs, which is why HydroQuotient applies a modest penalty rather than cancelling coffee out entirely. "If you are thirsty it is too late" overstates the case; thirst is a fine guide for most healthy adults, it is simply not an optimal planning tool. And "everyone needs a gallon a day" ignores body size completely — a gallon is overkill for a 50 kg office worker and possibly too little for a 100 kg athlete training in the heat.</p>
+
+      <h3 class="text-xl font-bold text-[#0C4A6E] mt-8 mb-3">Practical tips for hitting your target</h3>
+      <p class="mb-4 text-slate-700 leading-relaxed">Start the day with a full glass of water before coffee; overnight you lose fluid through breathing and you wake up mildly dehydrated. Keep water visible — a bottle on your desk beats a glass in the kitchen you never see. Tie drinking to existing habits: a glass with each meal, one when you start work, one when you finish. Eat your water too: cucumber, watermelon, oranges, lettuce and soups all contribute meaningfully. In hot weather or after sweaty exercise, add a pinch of salt or an electrolyte drink rather than doubling plain water alone. And if plain water bores you, sparkling water, herbal tea and water-rich smoothies all count toward the goal.</p>
+
+      <p class="mb-4 text-slate-700 leading-relaxed">Your hydration needs are personal, they shift with your day, and they deserve better than a generic rule of thumb. Enter your details above, get your HydroQuotient target in litres, glasses and bottles, and follow the timed schedule to actually hit it. Small, steady sips through the day add up to one of the simplest health upgrades there is.</p>
+
+      <p class="text-sm text-slate-500 italic">Disclaimer: HydroQuotient provides general wellness estimates, not medical advice. If you have kidney, heart or other conditions affecting fluid balance, or take diuretic medication, follow your healthcare professional's guidance instead.</p>
+    </article>
+
+    <!-- ======= FAQs (exactly 6) ======= -->
+    <section id="faq" class="mt-12">
+      <h2 class="text-2xl font-extrabold text-[#0C4A6E] mb-6">Frequently asked questions</h2>
+      <div class="space-y-4">
+        <details class="rounded-2xl border border-slate-200 bg-white p-5">
+          <summary class="font-bold text-[#0C4A6E] cursor-pointer">How much water should I drink per day?</summary>
+          <p class="mt-2 text-slate-600 text-sm leading-relaxed">A widely used starting point is 33 ml of water per kilogram of body weight per day. A 70 kg adult therefore needs about 2.3 litres as a baseline, plus roughly 600 ml for every hour of exercise, more in hot climates, and extra amounts to offset coffee, tea or alcohol. HydroQuotient calculates your personal target from all of these factors.</p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 bg-white p-5">
+          <summary class="font-bold text-[#0C4A6E] cursor-pointer">How do I calculate daily water intake by weight?</summary>
+          <p class="mt-2 text-slate-600 text-sm leading-relaxed">Multiply your weight in kilograms by 33 ml. For example, 60 kg &times; 33 ml = 1,980 ml (about 2 litres). If you weigh yourself in pounds, first convert to kilograms by multiplying by 0.4536. Then add water for exercise, heat, caffeine, alcohol, pregnancy or breastfeeding.</p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 bg-white p-5">
+          <summary class="font-bold text-[#0C4A6E] cursor-pointer">How many glasses of water per day should I drink?</summary>
+          <p class="mt-2 text-slate-600 text-sm leading-relaxed">It depends on your body and lifestyle, but using a standard 250 ml glass, most adults land between 8 and 12 glasses per day. A 70 kg moderately active person in a mild climate needs about 9&ndash;10 glasses. HydroQuotient shows your target in glasses, bottles and litres.</p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 bg-white p-5">
+          <summary class="font-bold text-[#0C4A6E] cursor-pointer">Does coffee count toward my daily water intake?</summary>
+          <p class="mt-2 text-slate-600 text-sm leading-relaxed">Coffee and tea are about 98% water and do hydrate you, but caffeine has a mild diuretic effect at higher doses and alcohol is a stronger diuretic. HydroQuotient adds a 150 ml penalty per cup of coffee or tea and 250 ml per alcoholic drink so your target compensates.</p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 bg-white p-5">
+          <summary class="font-bold text-[#0C4A6E] cursor-pointer">Do I need more water if I am pregnant or breastfeeding?</summary>
+          <p class="mt-2 text-slate-600 text-sm leading-relaxed">Yes. Standard guidance adds about 300 ml per day during pregnancy and about 700 ml per day while breastfeeding. Toggle the pregnancy/breastfeeding option in HydroQuotient and your target is raised automatically.</p>
+        </details>
+        <details class="rounded-2xl border border-slate-200 bg-white p-5">
+          <summary class="font-bold text-[#0C4A6E] cursor-pointer">How should I spread my water intake through the day?</summary>
+          <p class="mt-2 text-slate-600 text-sm leading-relaxed">Drink steadily from morning to evening rather than in a few large gulps. HydroQuotient builds a timed schedule with glass-sized slots from your wake-up time to an hour before bed, so you finish your target comfortably without late-night bathroom trips.</p>
+        </details>
+      </div>
+    </section>
+  </div>
+</div>
+
+<footer class="ocean-bg text-cyan-100/80">
+  <div class="mx-auto max-w-6xl px-4 sm:px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-3 text-sm">
+    <span class="font-bold text-white">HydroQuotient</span>
+    <span>Free hydration calculator &middot; estimates only, not medical advice</span>
+    <a href="https://fixoraa.tech" class="hover:text-cyan-300 font-semibold">More Tools</a>
+  </div>
+</footer>
+
+<script id="hq-logic">
+/* ============================================================
+ * HydroQuotient core hydration engine — pure functions, no DOM.
+ * Shared by hydroquotient.html (inlined verbatim) and the Node tests.
+ *
+ * Formula (grounded in common clinical guidance):
+ *   base        = weight(kg) x 33 ml
+ *   exercise    = +10 ml per exercise minute (600 ml / hour)
+ *   climate     = (base + exercise) x multiplier (1.0 - 1.3)
+ *   penalties   = 150 ml per coffee/tea cup, 250 ml per alcohol drink
+ *   preg/bf     = +300 ml pregnancy, +700 ml breastfeeding (IOM)
+ *   total       = climate-adjusted base/exercise + penalties + preg/bf
+ * ============================================================ */
+(function (root, factory) {
+  if (typeof module === 'object' && module && module.exports) {
+    module.exports = factory();
+  } else {
+    root.HydroQuotient = factory();
+  }
+})(typeof self !== 'undefined' ? self : this, function () {
+  'use strict';
+
+  var ML_PER_KG = 33;
+  var GLASS_ML = 250;
+  var BOTTLE_ML = 500;
+  var EXERCISE_ML_PER_MIN = 10;
+  var COFFEE_TEA_PENALTY_ML = 150;
+  var ALCOHOL_PENALTY_ML = 250;
+  var PREGNANCY_ML = 300;
+  var BREASTFEEDING_ML = 700;
+  var LBS_TO_KG = 0.45359237;
+  var MIN_SLOTS = 4;
+  var MAX_SLOTS = 14;
+  var LAST_SLOT_MIN_BEFORE_BED = 60;
+
+  var CLIMATE_MULTIPLIERS = {
+    mild: 1.0,      // temperate / air-conditioned day
+    warm: 1.1,      // warm weather
+    hot: 1.2,       // hot weather
+    extreme: 1.3    // hot and humid / heatwave
+  };
+
+  function toNum(v, fallback) {
+    var n = parseFloat(v);
+    return isFinite(n) ? n : fallback;
+  }
+
+  function clampInt(v, lo, hi) {
+    if (!isFinite(v)) return lo;
+    return Math.max(lo, Math.min(hi, Math.floor(v)));
+  }
+
+  /* ---------- weight ---------- */
+
+  // weight -> kilograms. unit: 'kg' or 'lbs'. Invalid/<=0 -> 0.
+  function weightKg(weight, unit) {
+    var w = toNum(weight, 0);
+    if (w <= 0) return 0;
+    var kg = (unit === 'lbs') ? w * LBS_TO_KG : w;
+    return kg > 0 ? kg : 0;
+  }
+
+  // Baseline daily intake in ml for a sedentary adult in a mild climate.
+  function baseIntakeMl(weight, unit) {
+    var kg = weightKg(weight, unit);
+    if (kg <= 0) return 0;
+    return Math.round(kg * ML_PER_KG);
+  }
+
+  /* ---------- exercise ---------- */
+
+  // Extra water for activity: 10 ml per minute of exercise.
+  function exerciseMl(minutes) {
+    var m = toNum(minutes, 0);
+    if (m <= 0) return 0;
+    return Math.round(m * EXERCISE_ML_PER_MIN);
+  }
+
+  /* ---------- climate ---------- */
+
+  function climateMultiplier(key) {
+    if (Object.prototype.hasOwnProperty.call(CLIMATE_MULTIPLIERS, key)) {
+      return CLIMATE_MULTIPLIERS[key];
+    }
+    return 1.0;
+  }
+
+  function climateMl(basePlusExerciseMl, key) {
+    return Math.round(basePlusExerciseMl * climateMultiplier(key));
+  }
+
+  /* ---------- beverage penalties ---------- */
+
+  // Caffeine is mildly diuretic at higher doses and alcohol more so:
+  // add 150 ml per coffee/tea cup and 250 ml per alcoholic drink.
+  function beveragePenaltyMl(coffeeCups, teaCups, alcoholDrinks) {
+    var coffee = clampInt(coffeeCups, 0, 50);
+    var tea = clampInt(teaCups, 0, 50);
+    var alcohol = clampInt(alcoholDrinks, 0, 50);
+    return (coffee + tea) * COFFEE_TEA_PENALTY_ML + alcohol * ALCOHOL_PENALTY_ML;
+  }
+
+  /* ---------- pregnancy / breastfeeding ---------- */
+
+  // mode: 'none' | 'pregnant' | 'breastfeeding'
+  function pregnancyAdjMl(mode) {
+    if (mode === 'pregnant') return PREGNANCY_ML;
+    if (mode === 'breastfeeding') return BREASTFEEDING_ML;
+    return 0;
+  }
+
+  /* ---------- full breakdown ---------- */
+
+  // opts: { weight, unit, exerciseMin, climate, coffee, tea, alcohol, preg }
+  // returns { base, exercise, climateKey, climateMult, subtotal, penalty, pregAdj, pregLabel, total }
+  function totalIntake(opts) {
+    var o = opts || {};
+    var base = baseIntakeMl(o.weight, o.unit);
+    var exercise = exerciseMl(o.exerciseMin);
+    var key = o.climate || 'mild';
+    var mult = climateMultiplier(key);
+    var subtotal = Math.round((base + exercise) * mult);
+    var penalty = beveragePenaltyMl(o.coffee, o.tea, o.alcohol);
+    var pregAdj = pregnancyAdjMl(o.preg);
+    var total = subtotal + penalty + pregAdj;
+    return {
+      base: base,
+      exercise: exercise,
+      climateKey: key,
+      climateMult: mult,
+      subtotal: subtotal,
+      penalty: penalty,
+      pregAdj: pregAdj,
+      pregMode: o.preg || 'none',
+      total: total
+    };
+  }
+
+  /* ---------- unit conversions ---------- */
+
+  function mlToLiters(ml) { return ml / 1000; }
+  function mlToGlasses(ml) { return ml / GLASS_ML; }
+  function mlToBottles(ml) { return ml / BOTTLE_ML; }
+
+  function fmtLiters(ml) { return (ml / 1000).toFixed(2); }
+
+  /* ---------- drinking schedule ---------- */
+
+  // "HH:MM" -> minutes since midnight. Invalid -> fallback.
+  function parseTime(str, fallback) {
+    var m = /^(\d{1,2}):(\d{2})$/.exec(String(str || '').trim());
+    if (!m) return fallback;
+    var h = parseInt(m[1], 10), min = parseInt(m[2], 10);
+    if (h < 0 || h > 23 || min < 0 || min > 59) return fallback;
+    return h * 60 + min;
+  }
+
+  function fmtTime(mins) {
+    mins = ((Math.round(mins) % 1440) + 1440) % 1440;
+    var h = Math.floor(mins / 60), m = mins % 60;
+    return (h < 10 ? '0' + h : '' + h) + ':' + (m < 10 ? '0' + m : '' + m);
+  }
+
+  // Spread totalMl across the day: one glass-ish slot at a time,
+  // first slot at wake, last slot at least 60 min before bed.
+  // Returns [{ time: "HH:MM", ml: n, label: "Glass 3 of 9" }, ...]
+  function generateSchedule(totalMl, wakeStr, bedStr, slotMl) {
+    var total = Math.max(0, Math.round(toNum(totalMl, 0)));
+    if (total <= 0) return [];
+    var per = Math.max(100, Math.round(toNum(slotMl, GLASS_ML)) || GLASS_ML);
+    var n = clampInt(Math.round(total / per), MIN_SLOTS, MAX_SLOTS);
+
+    var wake = parseTime(wakeStr, 7 * 60);
+    var bed = parseTime(bedStr, 22 * 60);
+    var last = bed - LAST_SLOT_MIN_BEFORE_BED;
+    if (last <= wake) last = wake + 12 * 60; // degenerate input: spread over 12h
+
+    var slots = [];
+    var perSlot = Math.round(total / n);
+    for (var i = 0; i < n; i++) {
+      var t = n === 1 ? wake : wake + ((last - wake) * i) / (n - 1);
+      var amt = (i === n - 1) ? total - perSlot * (n - 1) : perSlot;
+      slots.push({
+        time: fmtTime(t),
+        ml: Math.max(0, amt),
+        label: 'Drink ' + (i + 1) + ' of ' + n
+      });
+    }
+    return slots;
+  }
+
+  return {
+    ML_PER_KG: ML_PER_KG,
+    GLASS_ML: GLASS_ML,
+    BOTTLE_ML: BOTTLE_ML,
+    weightKg: weightKg,
+    baseIntakeMl: baseIntakeMl,
+    exerciseMl: exerciseMl,
+    climateMultiplier: climateMultiplier,
+    climateMl: climateMl,
+    beveragePenaltyMl: beveragePenaltyMl,
+    pregnancyAdjMl: pregnancyAdjMl,
+    totalIntake: totalIntake,
+    mlToLiters: mlToLiters,
+    mlToGlasses: mlToGlasses,
+    mlToBottles: mlToBottles,
+    fmtLiters: fmtLiters,
+    parseTime: parseTime,
+    fmtTime: fmtTime,
+    generateSchedule: generateSchedule
+  };
+});
+
+</script>
+
+<script>
+(function () {
+  'use strict';
+  var HQ = window.HydroQuotient;
+  if (!HQ) return;
+
+  var state = {
+    unit: 'kg',
+    climate: 'mild',
+    preg: 'none',
+    coffee: 0, tea: 0, alcohol: 0,
+    done: {} // slot index -> true for today
+  };
+
+  var $ = function (id) { return document.getElementById(id); };
+  var weightEl = $('weight'), exerciseEl = $('exercise'), exerciseVal = $('exerciseVal'),
+      wakeEl = $('wake'), bedEl = $('bed');
+
+  var INPUTS_KEY = 'hydroquotient-inputs-v1';
+  var PROGRESS_KEY = 'hydroquotient-progress-v1';
+
+  function todayStr() {
+    var d = new Date();
+    return d.getFullYear() + '-' + ('0' + (d.getMonth() + 1)).slice(-2) + '-' + ('0' + d.getDate()).slice(-2);
+  }
+
+  function loadInputs() {
+    try {
+      var raw = localStorage.getItem(INPUTS_KEY);
+      if (!raw) return;
+      var s = JSON.parse(raw);
+      if (s.weight != null) weightEl.value = s.weight;
+      if (s.unit) state.unit = s.unit;
+      if (s.exercise != null) exerciseEl.value = s.exercise;
+      if (s.climate) state.climate = s.climate;
+      if (s.preg) state.preg = s.preg;
+      ['coffee', 'tea', 'alcohol'].forEach(function (k) { if (s[k] != null) state[k] = Math.max(0, parseInt(s[k], 10) || 0); });
+      if (s.wake) wakeEl.value = s.wake;
+      if (s.bed) bedEl.value = s.bed;
+    } catch (e) {}
+  }
+
+  function saveInputs() {
+    try {
+      localStorage.setItem(INPUTS_KEY, JSON.stringify({
+        weight: weightEl.value, unit: state.unit, exercise: exerciseEl.value,
+        climate: state.climate, preg: state.preg,
+        coffee: state.coffee, tea: state.tea, alcohol: state.alcohol,
+        wake: wakeEl.value, bed: bedEl.value
+      }));
+    } catch (e) {}
+  }
+
+  function loadProgress() {
+    try {
+      var raw = localStorage.getItem(PROGRESS_KEY);
+      if (!raw) { state.done = {}; return; }
+      var s = JSON.parse(raw);
+      state.done = (s.date === todayStr() && s.done) ? s.done : {};
+    } catch (e) { state.done = {}; }
+  }
+
+  function saveProgress() {
+    try {
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify({ date: todayStr(), done: state.done }));
+    } catch (e) {}
+  }
+
+  function syncControls() {
+    document.querySelectorAll('[data-unit]').forEach(function (b) {
+      var on = b.getAttribute('data-unit') === state.unit;
+      b.classList.toggle('active', on);
+      b.classList.toggle('text-slate-500', !on);
+    });
+    document.querySelectorAll('[data-climate]').forEach(function (b) {
+      var on = b.getAttribute('data-climate') === state.climate;
+      b.classList.toggle('active', on);
+      b.classList.toggle('text-slate-600', !on);
+    });
+    document.querySelectorAll('[data-preg]').forEach(function (b) {
+      var on = b.getAttribute('data-preg') === state.preg;
+      b.classList.toggle('active', on);
+      b.classList.toggle('text-slate-500', !on);
+    });
+    $('coffeeCount').textContent = state.coffee;
+    $('teaCount').textContent = state.tea;
+    $('alcoholCount').textContent = state.alcohol;
+    exerciseVal.textContent = exerciseEl.value + ' min';
+  }
+
+  function currentScheduleKey() {
+    return [weightEl.value, state.unit, exerciseEl.value, state.climate, state.preg,
+            state.coffee, state.tea, state.alcohol, wakeEl.value, bedEl.value].join('|');
+  }
+  var lastScheduleKey = null;
+
+  function recalc() {
+    syncControls();
+    saveInputs();
+    var w = parseFloat(weightEl.value);
+    var valid = isFinite(w) && w > 0;
+    var heroMain = $('heroMain'), heroEmpty = $('heroEmpty');
+
+    if (!valid) {
+      heroMain.classList.add('hidden');
+      heroEmpty.classList.remove('hidden');
+      $('breakdownCard').classList.add('hidden');
+      $('scheduleSection').classList.add('hidden');
+      return;
+    }
+
+    var r = HQ.totalIntake({
+      weight: w, unit: state.unit,
+      exerciseMin: parseFloat(exerciseEl.value) || 0,
+      climate: state.climate,
+      coffee: state.coffee, tea: state.tea, alcohol: state.alcohol,
+      preg: state.preg
+    });
+
+    heroMain.classList.remove('hidden');
+    heroEmpty.classList.add('hidden');
+    $('targetLiters').textContent = HQ.fmtLiters(r.total);
+    $('targetMl').textContent = r.total.toLocaleString('en-US');
+    $('targetGlasses').textContent = (Math.round(HQ.mlToGlasses(r.total) * 10) / 10).toString();
+    $('targetBottles').textContent = (Math.round(HQ.mlToBottles(r.total) * 10) / 10).toString();
+
+    $('breakdownCard').classList.remove('hidden');
+    $('bdBase').textContent = r.base.toLocaleString('en-US') + ' ml';
+    $('bdExMin').textContent = exerciseEl.value;
+    $('bdExercise').textContent = '+' + r.exercise.toLocaleString('en-US') + ' ml';
+    var climateNames = { mild: 'mild', warm: 'warm', hot: 'hot', extreme: 'hot + humid' };
+    $('bdClimateName').textContent = climateNames[r.climateKey] || r.climateKey;
+    $('bdClimateMult').textContent = r.climateMult.toFixed(1);
+    $('bdSubtotal').textContent = r.subtotal.toLocaleString('en-US') + ' ml';
+    $('bdPenalty').textContent = '+' + r.penalty.toLocaleString('en-US') + ' ml';
+    $('bdPregLabel').textContent = r.pregMode === 'pregnant' ? 'Pregnancy (+300 ml/day)' :
+      (r.pregMode === 'breastfeeding' ? 'Breastfeeding (+700 ml/day)' : 'Pregnancy / breastfeeding');
+    $('bdPreg').textContent = '+' + r.pregAdj.toLocaleString('en-US') + ' ml';
+    $('bdTotal').textContent = r.total.toLocaleString('en-US') + ' ml';
+
+    // Schedule: rebuild only when inputs changed (keep tick state otherwise)
+    var key = currentScheduleKey();
+    if (key !== lastScheduleKey) {
+      lastScheduleKey = key;
+      loadProgress();
+      renderSchedule(r.total);
+    }
+    $('scheduleSection').classList.remove('hidden');
+    updateProgress();
+  }
+
+  function renderSchedule(totalMl) {
+    var slots = HQ.generateSchedule(totalMl, wakeEl.value, bedEl.value, HQ.GLASS_ML);
+    var list = $('scheduleList');
+    list.innerHTML = '';
+    slots.forEach(function (s, i) {
+      var li = document.createElement('li');
+      li.className = 'timeline-slot relative pl-8' + (state.done[i] ? ' done' : '');
+      li.innerHTML =
+        '<span class="timeline-dot absolute -left-[9px] top-1"></span>' +
+        '<label class="slot-card flex items-center justify-between gap-3 rounded-2xl border border-slate-200 bg-white px-4 py-3 cursor-pointer shadow-sm">' +
+          '<span class="flex items-center gap-3">' +
+            '<input type="checkbox" data-slot="' + i + '" class="w-5 h-5 accent-cyan-600"' + (state.done[i] ? ' checked' : '') + '>' +
+            '<span><span class="block font-extrabold text-[#0C4A6E]">' + s.time + '</span>' +
+            '<span class="block text-xs text-slate-500">' + s.label + ' &middot; ~' + s.ml + ' ml</span></span>' +
+          '</span>' +
+          '<span class="text-2xl" aria-hidden="true">&#128167;</span>' +
+        '</label>';
+      list.appendChild(li);
+    });
+    list.querySelectorAll('input[type=checkbox]').forEach(function (cb) {
+      cb.addEventListener('change', function () {
+        var idx = cb.getAttribute('data-slot');
+        if (cb.checked) state.done[idx] = true; else delete state.done[idx];
+        cb.closest('li').classList.toggle('done', cb.checked);
+        saveProgress();
+        updateProgress();
+      });
+    });
+    updateProgress();
+  }
+
+  function updateProgress() {
+    var boxes = document.querySelectorAll('#scheduleList input[type=checkbox]');
+    var total = boxes.length, done = 0;
+    boxes.forEach(function (cb) { if (cb.checked) done++; });
+    $('progressText').textContent = done + ' of ' + total + ' drinks done';
+    var pct = total ? Math.round(done / total * 100) : 0;
+    $('progressPct').textContent = pct + '%';
+    $('progressBar').style.width = pct + '%';
+  }
+
+  // ---- events ----
+  weightEl.addEventListener('input', recalc);
+  exerciseEl.addEventListener('input', recalc);
+  wakeEl.addEventListener('change', recalc);
+  bedEl.addEventListener('change', recalc);
+
+  document.querySelectorAll('[data-unit]').forEach(function (b) {
+    b.addEventListener('click', function () { state.unit = b.getAttribute('data-unit'); recalc(); });
+  });
+  document.querySelectorAll('[data-climate]').forEach(function (b) {
+    b.addEventListener('click', function () { state.climate = b.getAttribute('data-climate'); recalc(); });
+  });
+  document.querySelectorAll('[data-preg]').forEach(function (b) {
+    b.addEventListener('click', function () { state.preg = b.getAttribute('data-preg'); recalc(); });
+  });
+  document.querySelectorAll('[data-step]').forEach(function (b) {
+    b.addEventListener('click', function () {
+      var parts = b.getAttribute('data-step').split(',');
+      var k = parts[0], d = parseInt(parts[1], 10);
+      state[k] = Math.max(0, Math.min(20, (state[k] || 0) + d));
+      recalc();
+    });
+  });
+
+  $('resetProgress').addEventListener('click', function () {
+    state.done = {};
+    saveProgress();
+    lastScheduleKey = null;
+    recalc();
+  });
+
+  $('copySchedule').addEventListener('click', function () {
+    var boxes = document.querySelectorAll('#scheduleList .timeline-slot');
+    var lines = ['My HydroQuotient hydration schedule:'];
+    boxes.forEach(function (li) {
+      var t = li.querySelector('.font-extrabold').textContent;
+      var d = li.querySelector('.text-slate-500').textContent;
+      lines.push('- ' + t + ' — ' + d);
+    });
+    var text = lines.join('\n');
+    var btn = $('copySchedule');
+    function ok() { btn.textContent = 'Copied!'; setTimeout(function () { btn.textContent = 'Copy schedule'; }, 1500); }
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(ok, ok);
+    } else {
+      var ta = document.createElement('textarea');
+      ta.value = text; document.body.appendChild(ta); ta.select();
+      try { document.execCommand('copy'); } catch (e) {}
+      document.body.removeChild(ta); ok();
+    }
+  });
+
+  loadInputs();
+  loadProgress();
+  recalc();
+})();
+</script>
+</body>
+</html>
